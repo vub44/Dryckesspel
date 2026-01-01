@@ -272,7 +272,7 @@ canvas.addEventListener("click", () => {
         const content = lista.splice(index, 1)[0];
 
         // Bred text (nästan hela canvas)
-        const maxWidth = canvas.width * 0.9;
+        const maxWidth = canvas.width * 0.85;
         let lines = wrapText(content, maxWidth);
 
         // Anpassa font baserat på antal rader
@@ -333,5 +333,6 @@ document.getElementById("extremeBtn").addEventListener("click", () => {
 
 </body>
 </html>
+
 
 
