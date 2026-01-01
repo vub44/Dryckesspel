@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <title>Canvas Text App</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #1f1e47;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas {
+            background-color: #1f1e47;
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="canvas" width="400" height="400"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+// Textlista
+let lista = [
+    "Kort text",
+    "Detta är ett längre meddelande som automatiskt radbryts korrekt och aldrig försvinner utanför canvas"
+];
+
+// Stil
+ctx.font = "32px Arial";
+ctx.textBaseline = "top";
+
+// Rensa skärmen
+function clearScreen() {
+    ctx.fillStyle = "#1f1e47";   // bakgrund
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#e86500";   // text
+}
+
+// Robust text-wrap (pixelbaserad)
+function wrapText(text, maxWidth) {
+    const words = text.split(" ");
+    let lines = [];
+    let currentLine = "";
+
+    for (let word of words) {
+        const testLine = currentLine ? currentLine + " " + word : word;
+        const width = ctx.measureText(testLine).width;
+
+        if (width <= maxWidth) {
+            currentLine = testLine;
+        } else {
+            if (currentLine) {
+                lines.push(currentLine);
+            }
+            currentLine = word;
+        }
+    }
+
+    if (currentLine) {
+        lines.push(currentLine);
+    }
+
+    return lines;
+}
+
+// Klick = visa slumpad text
+canvas.addEventListener("click", () => {
+    clearScreen();
+
+    try {
+        if (lista.length === 0) {
+            throw new Error("Tom lista");
+        }
+
+        const index = Math.floor(Math.random() * lista.length);
+        const content = lista.splice(index, 1)[0];
+
+        const maxWidth = 300;
+        const lines = wrapText(content, maxWidth);
+
+        lines.forEach((line, i) => {
+            ctx.fillText(line, 50, 100 + i * 40);
+        });
+
+    } catch (e) {
+        ctx.fillText("slut på grejor", 50, 100);
+    }
+});
+
+// Startläge
+clearScreen();
+</script>
+
+</body>
+</html>
