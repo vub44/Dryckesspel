@@ -16,6 +16,7 @@ html, body {
 }
 
 #menu, #canvas-container {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -24,6 +25,14 @@ html, body {
     width: 100%;
 }
 
+.menu-credit {
+    position: absolute;
+    bottom: 2vh;
+    font-size: 3.5vw;
+    opacity: 0.6;
+    text-align: center;
+}
+    
 h1 {
     font-size: 10vw; /* skalar med skärmstorlek */
     text-align: center;
@@ -63,6 +72,7 @@ canvas {
     <h1>Spice</h1>
     <button id="standardBtn">Standard</button>
     <button id="extremeBtn">Extreme</button>
+    <div class="menu-credit">by: Matfors</div>
 </div>
 
 <div id="counter" style="display: none;"></div>
@@ -529,6 +539,7 @@ backBtn.addEventListener("click", () => {
 
 </body>
 </html>
+
 
 
 
