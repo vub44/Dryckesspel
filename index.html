@@ -449,15 +449,22 @@ function showPrompt(index) {
 
 canvas.addEventListener("click", (e) => {
     const x = e.clientX;
+
     if (x > window.innerWidth / 2) {
-        // höger sida → nästa prompt
-        currentIndex++;
+        // Höger sida → nästa prompt
+        if (currentIndex < lista.length - 1) {
+            currentIndex++;
+        }
     } else {
-        // vänster sida → föregående prompt
-        currentIndex--;
+        // Vänster sida → föregående prompt
+        if (currentIndex > 0) {
+            currentIndex--;
+        }
     }
+
     showPrompt(currentIndex);
 });
+
 
 // När spelet startar, sätt index till första prompten
 document.getElementById("standardBtn").addEventListener("click", () => {
@@ -495,6 +502,7 @@ backBtn.addEventListener("click", () => {
 
 </body>
 </html>
+
 
 
 
