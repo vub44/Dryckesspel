@@ -21,6 +21,10 @@ html, body {
     align-items: center;
     height: 100%;
     width: 100%;
+    max-width: 600px;       /* valfri maxbredd på menyn */
+    margin: 0 auto;          /* centrera menyn horisontellt */
+    gap: 20px;               /* avstånd mellan rubrik och knappar */
+    text-align: center;
 }
 
 h1 {
@@ -29,16 +33,19 @@ h1 {
 }
 
 button {
-    font-size: 4vw; /* responsiva knappar */
-    margin: 2vw;
-    padding: 2vh 4vw;
+    font-size: 4vw;           /* responsiv textstorlek */
+    margin: 1vw;               /* jämnare mellanrum */
+    padding: 1.5vh 3vw;        /* jämn padding */
     background-color: #e86500;
     border: none;
     color: #1f1e47;
     cursor: pointer;
     border-radius: 8px;
-    min-width: 160px;
+    min-width: 200px;          /* garanterar lika storlek */
+    width: 200px;              /* fixerar bredden */
+    box-sizing: border-box;    /* inkluderar padding i bredden */
 }
+
 
 canvas {
     background-color: #1f1e47;
@@ -502,6 +509,7 @@ backBtn.addEventListener("click", () => {
 
 </body>
 </html>
+
 
 
 
