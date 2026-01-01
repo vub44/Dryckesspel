@@ -64,6 +64,22 @@ canvas {
     <button id="extremeBtn">Extreme</button>
 </div>
 
+<div id="counter" style="display: none;">0</div>
+
+<style>
+#counter {
+    position: absolute;
+    top: 1vh;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2.5vw;
+    color: #e86500;
+    font-weight: bold;
+    z-index: 20;
+    text-align: center;
+}
+</style>
+
 <div id="canvas-container">
     <canvas id="canvas"></canvas>
     <button id="backBtn">Tillbaka</button>
@@ -260,44 +276,73 @@ function wrapText(text, maxWidth) {
     return lines;
 }
 
-// Klick = visa slumpad text
+// Uppdatera countern
+function updateCounter() {
+    const counterDiv = document.getElementById("counter");
+    counterDiv.textContent = `${lista.length}`;
+}
+
+// Vid start av spel
+document.getElementById("standardBtn").addEventListener("click", () => {
+    lista = [...standardLista];
+    document.getElementById("menu").style.display = "none";
+    canvas.style.display = "block";
+    backBtn.style.display = "none";
+    document.getElementById("counter").style.display = "block"; // visa counter
+    updateCounter(); // uppdatera direkt
+    resizeCanvas();
+});
+
+document.getElementById("extremeBtn").addEventListener("click", () => {
+    lista = [...extremeLista];
+    document.getElementById("menu").style.display = "none";
+    canvas.style.display = "block";
+    backBtn.style.display = "none";
+    document.getElementById("counter").style.display = "block"; // visa counter
+    updateCounter(); // uppdatera direkt
+    resizeCanvas();
+});
+
+backBtn.addEventListener("click", () => {
+    backBtn.style.display = "none";
+    document.getElementById("menu").style.display = "flex";
+    canvas.style.display = "none";
+    document.getElementById("counter").style.display = "none"; // göm counter
+});
+
+
 canvas.addEventListener("click", () => {
     clearScreen();
 
     try {
         if (lista.length === 0) throw new Error("Tom lista");
 
-        // Välj slumpad prompt
         const index = Math.floor(Math.random() * lista.length);
         const content = lista.splice(index, 1)[0];
 
-        // Bred text (nästan hela canvas)
+        updateCounter(); // <-- lägg här
+
         const maxWidth = canvas.width * 0.85;
         let lines = wrapText(content, maxWidth);
-
-        // Anpassa font baserat på antal rader
         const fontSize = setFont(lines.length);
         const lineHeight = fontSize * 1.2;
-
-        // Vertikal centrering, men startY >= 0
         let startY = (canvas.height - lines.length * lineHeight) / 2;
         if (startY < 0) startY = 0;
 
-        // Rita varje rad
         lines.forEach((line, i) => {
             ctx.fillText(line, canvas.width * 0.05, startY + i * lineHeight);
         });
 
     } catch (e) {
-        // Om listan är tom
-        const fontSize = setFont(1); // enkel rad
+        const fontSize = setFont(1);
         const lineHeight = fontSize * 1.2;
         const startY = (canvas.height - lineHeight) / 2;
         ctx.fillText("slut på grejor", canvas.width * 0.05, startY);
-
-        backBtn.style.display = "inline-block"; // visa tillbaka-knapp
+        backBtn.style.display = "inline-block";
+        updateCounter(); // visa 0
     }
 });
+
 
 // Startläge / placeholder
 function drawPlaceholder() {
@@ -333,7 +378,6 @@ document.getElementById("extremeBtn").addEventListener("click", () => {
 
 </body>
 </html>
-
 
 
 
