@@ -4,38 +4,56 @@
 <meta charset="UTF-8">
 <title>Drick!</title>
 <style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        background-color: #1f1e47;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-family: Arial, sans-serif;
-        color: #e86500;
-    }
-    #menu, #canvas-container {
-        text-align: center;
-        width: 100%;
-        height: 100%;
-    }
-    button {
-        font-size: 1.5rem;
-        margin: 1rem;
-        padding: 1rem 2rem;
-        background-color: #e86500;
-        border: none;
-        color: #1f1e47;
-        cursor: pointer;
-        border-radius: 8px;
-    }
-    canvas {
-        display: none;
-        background-color: #1f1e47;
-        width: 100%;
-        height: 100%;
-    }
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #1f1e47;
+    font-family: Arial, sans-serif;
+    color: #e86500;
+}
+
+#menu, #canvas-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+h1 {
+    font-size: 5vw; /* skalar med skärmstorlek */
+    text-align: center;
+}
+
+button {
+    font-size: 4vw; /* responsiva knappar */
+    margin: 2vw;
+    padding: 2vh 4vw;
+    background-color: #e86500;
+    border: none;
+    color: #1f1e47;
+    cursor: pointer;
+    border-radius: 8px;
+    min-width: 120px;
+}
+
+canvas {
+    background-color: #1f1e47;
+    width: 100%;
+    height: 80%;
+    display: none;
+}
+
+#backBtn {
+    position: absolute;
+    top: 2vh;
+    right: 2vw;
+    z-index: 10;
+    display: none;
+}
 </style>
 </head>
 <body>
@@ -48,8 +66,7 @@
 
 <div id="canvas-container">
     <canvas id="canvas"></canvas>
-    <br>
-    <button id="backBtn" style="display:none;">Tillbaka</button>
+    <button id="backBtn">Tillbaka</button>
 </div>
 
 <script>
@@ -57,7 +74,7 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const backBtn = document.getElementById("backBtn");
 
-// Två listor, STANDARD LISTA LÄGG TILL HÄR:
+// STANDARD LISTAN BUUUUUUUU 
 let standardLista = [
 'Never have I ever: haft sex ien bil', 'Pekleken: Vem får hemsläp?',
 'Two truths and a lie, förloraren dricker 3',
@@ -178,7 +195,7 @@ let standardLista = [
 'regel'
 ];
 
-// EXTREM LISTA LÄGG TILL HÄR:
+    // EXTREMA LISTAN !!!! YEEEEAAAAH
 let extremeLista = [
     '🔥 Extreme prompt 1 🔥',
     '💀 Extreme prompt 2 💀',
@@ -186,12 +203,12 @@ let extremeLista = [
     'Detta är en väldigt lång extreme prompt som testar wrapping på mobilskärmar'
 ];
 
-let lista = []; // aktuell lista
+let lista = [];
 
 // Responsiv canvas
 function resizeCanvas() {
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.height = window.innerHeight * 0.8; // 80% för canvas, resten kan vara knapp
     drawPlaceholder();
 }
 
@@ -253,7 +270,7 @@ canvas.addEventListener("click", () => {
 
     } catch (e) {
         ctx.fillText("slut på grejor", canvas.width * 0.125, canvas.height / 2);
-        backBtn.style.display = "inline-block"; // visa tillbaka-knapp
+        backBtn.style.display = "inline-block";
     }
 });
 
@@ -267,7 +284,7 @@ function drawPlaceholder() {
 // Tillbaka till meny
 backBtn.addEventListener("click", () => {
     backBtn.style.display = "none";
-    document.getElementById("menu").style.display = "block";
+    document.getElementById("menu").style.display = "flex";
     canvas.style.display = "none";
 });
 
