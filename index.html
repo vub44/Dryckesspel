@@ -111,7 +111,7 @@ let standardLista = [
 'Peklek: Vem är störst fuckgirl',
 'Säg ett påstående om en person, om någon gissar rätt drick 5 om de gissar fel 3 ågnger dela ut 5',
 'Sanning eller konsekvens: Vilket är ditt favoritställe att bli berörd? eller :Slicka en spelare på kinden: eller',
-'jag har alldrig: Haft sex utomhus?,
+'jag har alldrig: Haft sex utomhus?',
 'Vattenfall: Chug bitch!!!',
 'Jag har aldrig: Haft majoriteten av mina ligg nykter?',
 'Förklara eller demonstrera din favorit sex ställning:: vägran = 4',
@@ -333,11 +333,19 @@ let extremeLista = [
 
 let lista = [];
 
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 // Responsiv canvas
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight * 0.8; // 80% för canvas, resten kan vara knapp
-    drawPlaceholder();
+    clearScreen(); // rensa
 }
 
 window.addEventListener("resize", resizeCanvas);
@@ -391,29 +399,13 @@ function wrapText(text, maxWidth) {
 // Uppdatera countern
 function updateCounter() {
     const counterDiv = document.getElementById("counter");
-    counterDiv.textContent = `${lista.length}`;
+    if (currentIndex < 0 || currentIndex >= lista.length) {
+        counterDiv.textContent = `0`;
+    } else {
+        counterDiv.textContent = `${lista.length - currentIndex}`;
+    }
 }
 
-// Vid start av spel
-document.getElementById("standardBtn").addEventListener("click", () => {
-    lista = [...standardLista];
-    document.getElementById("menu").style.display = "none";
-    canvas.style.display = "block";
-    backBtn.style.display = "none";
-    document.getElementById("counter").style.display = "block"; // visa counter
-    updateCounter(); // uppdatera direkt
-    resizeCanvas();
-});
-
-document.getElementById("extremeBtn").addEventListener("click", () => {
-    lista = [...extremeLista];
-    document.getElementById("menu").style.display = "none";
-    canvas.style.display = "block";
-    backBtn.style.display = "none";
-    document.getElementById("counter").style.display = "block"; // visa counter
-    updateCounter(); // uppdatera direkt
-    resizeCanvas();
-});
 
 backBtn.addEventListener("click", () => {
     backBtn.style.display = "none";
@@ -423,45 +415,71 @@ backBtn.addEventListener("click", () => {
 });
 
 
-canvas.addEventListener("click", () => {
+let currentIndex = -1; // börjar innan första prompten
+
+function showPrompt(index) {
     clearScreen();
-
-    try {
-        if (lista.length === 0) throw new Error("Tom lista");
-
-        const index = Math.floor(Math.random() * lista.length);
-        const content = lista.splice(index, 1)[0];
-
-        updateCounter(); // <-- lägg här
-
-        const maxWidth = canvas.width * 0.8;
-        let lines = wrapText(content, maxWidth);
-        const fontSize = setFont(lines.length);
-        const lineHeight = fontSize * 1.2;
-        let startY = (canvas.height - lines.length * lineHeight) / 2;
-        if (startY < 0) startY = 0;
-
-        lines.forEach((line, i) => {
-            ctx.fillText(line, canvas.width * 0.05, startY + i * lineHeight);
-        });
-
-    } catch (e) {
+    if (index < 0 || index >= lista.length) {
         const fontSize = setFont(1);
         const lineHeight = fontSize * 1.2;
         const startY = (canvas.height - lineHeight) / 2;
         ctx.fillText("slut på grejor", canvas.width * 0.05, startY);
         backBtn.style.display = "inline-block";
-        updateCounter(); // visa 0
+        updateCounter();
+        return;
     }
+
+    const content = lista[index];
+    updateCounter();
+
+    const maxWidth = canvas.width * 0.8;
+    const lines = wrapText(content, maxWidth);
+    const fontSize = setFont(lines.length);
+    const lineHeight = fontSize * 1.2;
+    let startY = (canvas.height - lines.length * lineHeight) / 2;
+    if (startY < 0) startY = 0;
+
+    lines.forEach((line, i) => {
+        ctx.fillText(line, canvas.width * 0.05, startY + i * lineHeight);
+    });
+}
+
+canvas.addEventListener("click", (e) => {
+    const x = e.clientX;
+    if (x > window.innerWidth / 2) {
+        // höger sida → nästa prompt
+        currentIndex++;
+    } else {
+        // vänster sida → föregående prompt
+        currentIndex--;
+    }
+    showPrompt(currentIndex);
+});
+
+// När spelet startar, sätt index till första prompten
+document.getElementById("standardBtn").addEventListener("click", () => {
+    lista = shuffleArray([...standardLista]);
+    currentIndex = 0;
+    document.getElementById("menu").style.display = "none";
+    canvas.style.display = "block";
+    backBtn.style.display = "none";
+    document.getElementById("counter").style.display = "block";
+    resizeCanvas();         // Sätt storlek först
+    showPrompt(currentIndex); // Visa prompt direkt
+});
+
+document.getElementById("extremeBtn").addEventListener("click", () => {
+    lista = shuffleArray([...extremeLista]);
+    currentIndex = 0;
+    document.getElementById("menu").style.display = "none";
+    canvas.style.display = "block";
+    backBtn.style.display = "none";
+    document.getElementById("counter").style.display = "block";
+    resizeCanvas();         // Sätt storlek först
+    showPrompt(currentIndex); // Visa prompt direkt
 });
 
 
-// Startläge / placeholder
-function drawPlaceholder() {
-    clearScreen();
-    setFont();
-    ctx.fillText("Klicka för text", canvas.width * 0.125, canvas.height / 2);
-}
 
 // Tillbaka till meny
 backBtn.addEventListener("click", () => {
@@ -470,30 +488,7 @@ backBtn.addEventListener("click", () => {
     canvas.style.display = "none";
 });
 
-// Hantera lägesval
-document.getElementById("standardBtn").addEventListener("click", () => {
-    lista = [...standardLista];
-    document.getElementById("menu").style.display = "none";
-    canvas.style.display = "block";
-    backBtn.style.display = "none";
-    resizeCanvas();
-});
-
-document.getElementById("extremeBtn").addEventListener("click", () => {
-    lista = [...extremeLista];
-    document.getElementById("menu").style.display = "none";
-    canvas.style.display = "block";
-    backBtn.style.display = "none";
-    resizeCanvas();
-});
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
