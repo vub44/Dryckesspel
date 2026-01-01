@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <title>Hemligt spel</title>
-    <style>
-        body {
-            margin: 0;
-            background-color: #1f1e47;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        canvas {
-            background-color: #1f1e47;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Drick!</title>
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        background-color: #1f1e47;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    canvas {
+        display: block;
+        background-color: #1f1e47;
+        width: 100%;
+        height: 100%;
+    }
+</style>
 </head>
 <body>
 
-<canvas id="canvas" width="400" height="400"></canvas>
+<canvas id="canvas"></canvas>
 
 <script>
 const canvas = document.getElementById("canvas");
@@ -146,18 +150,31 @@ let lista = [
 'regel'
 ];
 
-// Stil
-ctx.font = "32px Arial";
-ctx.textBaseline = "top";
+// Responsiv canvas
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    drawPlaceholder(); // rita nåt initialt
+}
+
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
 
 // Rensa skärmen
 function clearScreen() {
     ctx.fillStyle = "#1f1e47";   // bakgrund
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#e86500";   // text
+    ctx.fillStyle = "#e86500";   // textfärg
 }
 
-// Robust text-wrap (pixelbaserad)
+// Responsiv fontstorlek baserat på canvas
+function setFont() {
+    const fontSize = Math.floor(canvas.width / 12); // t.ex. 12 delar av bredden
+    ctx.font = `${fontSize}px Arial`;
+    ctx.textBaseline = "top";
+}
+
+// Word-wrap baserat på canvasbredd
 function wrapText(text, maxWidth) {
     const words = text.split(" ");
     let lines = [];
@@ -165,51 +182,51 @@ function wrapText(text, maxWidth) {
 
     for (let word of words) {
         const testLine = currentLine ? currentLine + " " + word : word;
-        const width = ctx.measureText(testLine).width;
-
-        if (width <= maxWidth) {
+        if (ctx.measureText(testLine).width <= maxWidth) {
             currentLine = testLine;
         } else {
-            if (currentLine) {
-                lines.push(currentLine);
-            }
+            if (currentLine) lines.push(currentLine);
             currentLine = word;
         }
     }
 
-    if (currentLine) {
-        lines.push(currentLine);
-    }
-
+    if (currentLine) lines.push(currentLine);
     return lines;
 }
 
 // Klick = visa slumpad text
 canvas.addEventListener("click", () => {
     clearScreen();
+    setFont();
 
     try {
-        if (lista.length === 0) {
-            throw new Error("Tom lista");
-        }
+        if (lista.length === 0) throw new Error("Tom lista");
 
         const index = Math.floor(Math.random() * lista.length);
         const content = lista.splice(index, 1)[0];
 
-        const maxWidth = 300;
+        const maxWidth = canvas.width * 0.75; // max 75% av canvasbredd
         const lines = wrapText(content, maxWidth);
 
+        // Vertikal centrering
+        const lineHeight = parseInt(ctx.font, 10) * 1.2;
+        let startY = (canvas.height - lines.length * lineHeight) / 2;
+
         lines.forEach((line, i) => {
-            ctx.fillText(line, 50, 100 + i * 40);
+            ctx.fillText(line, canvas.width * 0.125, startY + i * lineHeight);
         });
 
     } catch (e) {
-        ctx.fillText("slut på grejor", 50, 100);
+        ctx.fillText("slut på grejor", canvas.width * 0.125, canvas.height / 2);
     }
 });
 
 // Startläge
-clearScreen();
+function drawPlaceholder() {
+    clearScreen();
+    setFont();
+    ctx.fillText("Klicka för text", canvas.width * 0.125, canvas.height / 2);
+}
 </script>
 
 </body>
