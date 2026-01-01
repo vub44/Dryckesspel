@@ -221,11 +221,24 @@ function clearScreen() {
     ctx.fillStyle = "#e86500";   
 }
 
-// Responsiv font
-function setFont() {
-    const fontSize = Math.floor(canvas.width / 12);
+// Anpassad font som minskar om texten blir för lång
+function setFont(linesLength = 1) {
+    // Max fontstorlek baserat på canvasbredd
+    let fontSize = Math.floor(canvas.width / 12);
+    
+    // Max höjd vi vill använda (90% av canvas)
+    const maxHeight = canvas.height * 0.9;
+    const lineHeight = fontSize * 1.2;
+
+    // Om texten blir för lång, minska fonten så allt får plats
+    if (linesLength * lineHeight > maxHeight) {
+        fontSize = Math.floor(maxHeight / (linesLength * 1.2));
+    }
+
     ctx.font = `${fontSize}px Impact`;
     ctx.textBaseline = "top";
+
+    return fontSize;
 }
 
 // Word-wrap
@@ -250,27 +263,39 @@ function wrapText(text, maxWidth) {
 // Klick = visa slumpad text
 canvas.addEventListener("click", () => {
     clearScreen();
-    setFont();
 
     try {
         if (lista.length === 0) throw new Error("Tom lista");
 
+        // Välj slumpad prompt
         const index = Math.floor(Math.random() * lista.length);
         const content = lista.splice(index, 1)[0];
 
-        const maxWidth = canvas.width * 0.85;
-        const lines = wrapText(content, maxWidth);
+        // Bred text (nästan hela canvas)
+        const maxWidth = canvas.width * 0.9;
+        let lines = wrapText(content, maxWidth);
 
-        const lineHeight = parseInt(ctx.font, 10) * 1.2;
+        // Anpassa font baserat på antal rader
+        const fontSize = setFont(lines.length);
+        const lineHeight = fontSize * 1.2;
+
+        // Vertikal centrering, men startY >= 0
         let startY = (canvas.height - lines.length * lineHeight) / 2;
+        if (startY < 0) startY = 0;
 
+        // Rita varje rad
         lines.forEach((line, i) => {
-            ctx.fillText(line, canvas.width * 0.125, startY + i * lineHeight);
+            ctx.fillText(line, canvas.width * 0.05, startY + i * lineHeight);
         });
 
     } catch (e) {
-        ctx.fillText("slut på grejor", canvas.width * 0.125, canvas.height / 2);
-        backBtn.style.display = "inline-block";
+        // Om listan är tom
+        const fontSize = setFont(1); // enkel rad
+        const lineHeight = fontSize * 1.2;
+        const startY = (canvas.height - lineHeight) / 2;
+        ctx.fillText("slut på grejor", canvas.width * 0.05, startY);
+
+        backBtn.style.display = "inline-block"; // visa tillbaka-knapp
     }
 });
 
@@ -308,4 +333,5 @@ document.getElementById("extremeBtn").addEventListener("click", () => {
 
 </body>
 </html>
+
 
