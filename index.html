@@ -430,7 +430,8 @@ function showPrompt(index) {
         const fontSize = setFont(1);
         const lineHeight = fontSize * 1.2;
         const startY = (canvas.height - lineHeight) / 2;
-        ctx.fillText("slut på grejor", canvas.width * 0.05, startY);
+        ctx.textAlign = "center";  // horisontellt centrera
+        ctx.fillText("slut på grejor", canvas.width / 2, startY);
         backBtn.style.display = "inline-block";
         updateCounter();
         return;
@@ -441,24 +442,26 @@ function showPrompt(index) {
 
     const maxWidth = canvas.width * 0.8;
 
-    // 1. sätt fonten innan wrap för korrekt mätning
-    const fontSize = setFont(10); // anta max 10 rader för första mätningen
-    ctx.font = `${fontSize}px Impact`; // säkerställ att ctx har font
+    // sätt font innan wrap
+    let fontSize = setFont(10); 
+    ctx.font = `${fontSize}px Impact`; 
+    ctx.textAlign = "center"; // centrera horisontellt
     const lines = wrapText(content, maxWidth);
 
-    // 2. Justera font om det blir fler rader än plats
+    // justera font om texten blir för lång
     const lineHeight = fontSize * 1.2;
     const totalHeight = lines.length * lineHeight;
     if (totalHeight > canvas.height * 0.9) {
-        const adjustedFontSize = Math.floor((canvas.height * 0.9) / lines.length / 1.2);
-        ctx.font = `${adjustedFontSize}px Impact`;
+        fontSize = Math.floor((canvas.height * 0.9) / lines.length / 1.2);
+        ctx.font = `${fontSize}px Impact`;
     }
 
+    // vertikal centrering
     let startY = (canvas.height - lines.length * lineHeight) / 2;
     if (startY < 0) startY = 0;
 
     lines.forEach((line, i) => {
-        ctx.fillText(line, canvas.width * 0.05, startY + i * lineHeight);
+        ctx.fillText(line, canvas.width / 2, startY + i * lineHeight);
     });
 }
 
@@ -527,6 +530,7 @@ backBtn.addEventListener("click", () => {
 
 </body>
 </html>
+
 
 
 
