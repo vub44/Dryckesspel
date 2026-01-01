@@ -12,9 +12,26 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        font-family: Arial, sans-serif;
+        color: #e86500;
+    }
+    #menu, #canvas-container {
+        text-align: center;
+        width: 100%;
+        height: 100%;
+    }
+    button {
+        font-size: 1.5rem;
+        margin: 1rem;
+        padding: 1rem 2rem;
+        background-color: #e86500;
+        border: none;
+        color: #1f1e47;
+        cursor: pointer;
+        border-radius: 8px;
     }
     canvas {
-        display: block;
+        display: none;
         background-color: #1f1e47;
         width: 100%;
         height: 100%;
@@ -23,14 +40,25 @@
 </head>
 <body>
 
-<canvas id="canvas"></canvas>
+<div id="menu">
+    <h1>Välj läge</h1>
+    <button id="standardBtn">Standard</button>
+    <button id="extremeBtn">Extreme</button>
+</div>
+
+<div id="canvas-container">
+    <canvas id="canvas"></canvas>
+    <br>
+    <button id="backBtn" style="display:none;">Tillbaka</button>
+</div>
 
 <script>
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const backBtn = document.getElementById("backBtn");
 
-// Textlista
-let lista = [
+// Två listor, STANDARD LISTA LÄGG TILL HÄR:
+let standardLista = [
 'Never have I ever: haft sex ien bil', 'Pekleken: Vem får hemsläp?',
 'Two truths and a lie, förloraren dricker 3',
 '$.Jag har aldrig gamblat med äkta pengar.$',
@@ -150,31 +178,40 @@ let lista = [
 'regel'
 ];
 
+// EXTREM LISTA LÄGG TILL HÄR:
+let extremeLista = [
+    '🔥 Extreme prompt 1 🔥',
+    '💀 Extreme prompt 2 💀',
+    '⚡ Extreme prompt 3 ⚡',
+    'Detta är en väldigt lång extreme prompt som testar wrapping på mobilskärmar'
+];
+
+let lista = []; // aktuell lista
+
 // Responsiv canvas
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    drawPlaceholder(); // rita nåt initialt
+    drawPlaceholder();
 }
 
 window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
 
 // Rensa skärmen
 function clearScreen() {
-    ctx.fillStyle = "#1f1e47";   // bakgrund
+    ctx.fillStyle = "#1f1e47";   
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#e86500";   // textfärg
+    ctx.fillStyle = "#e86500";   
 }
 
-// Responsiv fontstorlek baserat på canvas
+// Responsiv font
 function setFont() {
-    const fontSize = Math.floor(canvas.width / 12); // t.ex. 12 delar av bredden
+    const fontSize = Math.floor(canvas.width / 12);
     ctx.font = `${fontSize}px Impact`;
     ctx.textBaseline = "top";
 }
 
-// Word-wrap baserat på canvasbredd
+// Word-wrap
 function wrapText(text, maxWidth) {
     const words = text.split(" ");
     let lines = [];
@@ -189,7 +226,6 @@ function wrapText(text, maxWidth) {
             currentLine = word;
         }
     }
-
     if (currentLine) lines.push(currentLine);
     return lines;
 }
@@ -205,10 +241,9 @@ canvas.addEventListener("click", () => {
         const index = Math.floor(Math.random() * lista.length);
         const content = lista.splice(index, 1)[0];
 
-        const maxWidth = canvas.width * 0.75; // max 75% av canvasbredd
+        const maxWidth = canvas.width * 0.75;
         const lines = wrapText(content, maxWidth);
 
-        // Vertikal centrering
         const lineHeight = parseInt(ctx.font, 10) * 1.2;
         let startY = (canvas.height - lines.length * lineHeight) / 2;
 
@@ -218,17 +253,41 @@ canvas.addEventListener("click", () => {
 
     } catch (e) {
         ctx.fillText("slut på grejor", canvas.width * 0.125, canvas.height / 2);
+        backBtn.style.display = "inline-block"; // visa tillbaka-knapp
     }
 });
 
-// Startläge
+// Startläge / placeholder
 function drawPlaceholder() {
     clearScreen();
     setFont();
     ctx.fillText("Klicka för text", canvas.width * 0.125, canvas.height / 2);
 }
+
+// Tillbaka till meny
+backBtn.addEventListener("click", () => {
+    backBtn.style.display = "none";
+    document.getElementById("menu").style.display = "block";
+    canvas.style.display = "none";
+});
+
+// Hantera lägesval
+document.getElementById("standardBtn").addEventListener("click", () => {
+    lista = [...standardLista];
+    document.getElementById("menu").style.display = "none";
+    canvas.style.display = "block";
+    backBtn.style.display = "none";
+    resizeCanvas();
+});
+
+document.getElementById("extremeBtn").addEventListener("click", () => {
+    lista = [...extremeLista];
+    document.getElementById("menu").style.display = "none";
+    canvas.style.display = "block";
+    backBtn.style.display = "none";
+    resizeCanvas();
+});
 </script>
 
 </body>
 </html>
-
