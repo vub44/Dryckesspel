@@ -258,7 +258,7 @@ canvas.addEventListener("click", () => {
         const index = Math.floor(Math.random() * lista.length);
         const content = lista.splice(index, 1)[0];
 
-        const maxWidth = canvas.width * 0.75;
+        const maxWidth = canvas.width * 0.85;
         const lines = wrapText(content, maxWidth);
 
         const lineHeight = parseInt(ctx.font, 10) * 1.2;
@@ -308,3 +308,4 @@ document.getElementById("extremeBtn").addEventListener("click", () => {
 
 </body>
 </html>
+
