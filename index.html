@@ -429,7 +429,10 @@ let currentIndex = -1; // börjar innan första prompten
 
 function showPrompt(index) {
     clearScreen();
-    if (index < 0 || index >= lista.length) {
+
+    if (index < 0) index = 0; // säkerställ att vi inte hamnar på negativt index
+
+    if (index >= lista.length) {
         const fontSize = setFont(1);
         const lineHeight = fontSize * 1.2;
         const startY = (canvas.height - lineHeight) / 2;
@@ -454,6 +457,7 @@ function showPrompt(index) {
     });
 }
 
+
 canvas.addEventListener("click", (e) => {
     const x = e.clientX;
 
@@ -461,17 +465,20 @@ canvas.addEventListener("click", (e) => {
         // Höger sida → nästa prompt
         if (currentIndex < lista.length - 1) {
             currentIndex++;
+        } else {
+            // Om vi redan är på sista prompten, visa sluttext
+            currentIndex++;
         }
     } else {
         // Vänster sida → föregående prompt
         if (currentIndex > 0) {
             currentIndex--;
         }
+        // Om vi är på första prompten, gör inget
     }
 
     showPrompt(currentIndex);
 });
-
 
 // När spelet startar, sätt index till första prompten
 document.getElementById("standardBtn").addEventListener("click", () => {
@@ -509,6 +516,7 @@ backBtn.addEventListener("click", () => {
 
 </body>
 </html>
+
 
 
 
