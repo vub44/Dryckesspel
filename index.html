@@ -477,14 +477,19 @@ canvas.addEventListener("click", (e) => {
 
 // När spelet startar, sätt index till första prompten
 document.getElementById("standardBtn").addEventListener("click", () => {
-    lista = shuffleArray([...standardLista]);
+    lista = shuffleArray([...standardLista]); // slumpad lista
     currentIndex = 0;
     document.getElementById("menu").style.display = "none";
     canvas.style.display = "block";
     backBtn.style.display = "none";
     document.getElementById("counter").style.display = "block";
-    resizeCanvas();         // Sätt storlek först
-    showPrompt(currentIndex); // Visa prompt direkt
+
+    resizeCanvas(); // se till att canvas har rätt storlek
+
+    // Vänta tills canvas är uppdaterad innan vi ritar
+    requestAnimationFrame(() => {
+        showPrompt(currentIndex);
+    });
 });
 
 document.getElementById("extremeBtn").addEventListener("click", () => {
@@ -494,11 +499,13 @@ document.getElementById("extremeBtn").addEventListener("click", () => {
     canvas.style.display = "block";
     backBtn.style.display = "none";
     document.getElementById("counter").style.display = "block";
-    resizeCanvas();         // Sätt storlek först
-    showPrompt(currentIndex); // Visa prompt direkt
+
+    resizeCanvas();
+
+    requestAnimationFrame(() => {
+        showPrompt(currentIndex);
+    });
 });
-
-
 
 // Tillbaka till meny
 backBtn.addEventListener("click", () => {
@@ -511,6 +518,7 @@ backBtn.addEventListener("click", () => {
 
 </body>
 </html>
+
 
 
 
