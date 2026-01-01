@@ -30,14 +30,14 @@ h1 {
 
 button {
     font-size: 4vw; /* responsiva knappar */
-    margin: 2vw;
+    margin: 1vw;
     padding: 2vh 4vw;
     background-color: #e86500;
     border: none;
     color: #1f1e47;
     cursor: pointer;
     border-radius: 8px;
-    min-width: 120px;
+    min-width: 100px;
 }
 
 canvas {
@@ -385,16 +385,20 @@ function wrapText(text, maxWidth) {
 
     for (let word of words) {
         const testLine = currentLine ? currentLine + " " + word : word;
-        if (ctx.measureText(testLine).width <= maxWidth) {
-            currentLine = testLine;
+
+        // Om raden blir för lång, flytta hela ordet till nästa rad
+        if (ctx.measureText(testLine).width > maxWidth) {
+            if (currentLine) lines.push(currentLine); // spara raden
+            currentLine = word; // börja ny rad med ordet
         } else {
-            if (currentLine) lines.push(currentLine);
-            currentLine = word;
+            currentLine = testLine; // annars lägg till ordet på raden
         }
     }
-    if (currentLine) lines.push(currentLine);
+
+    if (currentLine) lines.push(currentLine); // lägg till sista raden
     return lines;
 }
+
 
 // Uppdatera countern
 function updateCounter() {
@@ -492,5 +496,6 @@ backBtn.addEventListener("click", () => {
 
 </body>
 </html>
+
 
 
