@@ -382,7 +382,7 @@ function setFont(linesLength = 1) {
         fontSize = Math.floor(maxHeight / (linesLength * 1.2));
     }
 
-    ctx.font = `${fontSize}px Impact`;
+    ctx.font = `${fontSize}px Arial`;
     ctx.textBaseline = "top";
 
     return fontSize;
@@ -454,7 +454,7 @@ function showPrompt(index) {
 
     // sätt font innan wrap
     let fontSize = setFont(10); 
-    ctx.font = `${fontSize}px Impact`; 
+    ctx.font = `${fontSize}px Arial`; 
     ctx.textAlign = "center"; // centrera horisontellt
     const lines = wrapText(content, maxWidth);
 
@@ -463,7 +463,7 @@ function showPrompt(index) {
     const totalHeight = lines.length * lineHeight;
     if (totalHeight > canvas.height * 0.9) {
         fontSize = Math.floor((canvas.height * 0.9) / lines.length / 1.2);
-        ctx.font = `${fontSize}px Impact`;
+        ctx.font = `${fontSize}px Arial`;
     }
 
     // vertikal centrering
@@ -540,6 +540,7 @@ backBtn.addEventListener("click", () => {
 
 </body>
 </html>
+
 
 
 
